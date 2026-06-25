@@ -17,6 +17,16 @@ Steam 1.25.5.6).
 > great on it. Setup: rename DXVK's `d3d9.dll` to `d3d9_dxvk.dll` so it coexists with this filter
 > (see *Install / Use* step 4).
 
+## Download
+
+[![Latest release](https://img.shields.io/github/v/release/heiybb/tl2-loot-filter)](https://github.com/heiybb/tl2-loot-filter/releases/latest)
+
+**[⬇ Download the latest build — tl2-loot-filter.zip](https://github.com/heiybb/tl2-loot-filter/releases/latest/download/tl2-loot-filter.zip)**
+
+The zip contains `zh/d3d9.dll` and `en/d3d9.dll`. Pick your language and drop that `d3d9.dll` into the
+game root (next to `Torchlight2.exe`) — see *Install / Use*. No building required. (This link always
+points to the newest release.)
+
 ## What it does
 
 - **Filter before landing**: hooks the drop-landing point (`sub_5EAA80`); a drop matching your

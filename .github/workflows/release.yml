@@ -1,0 +1,52 @@
+name: Build & Release
+
+# 推送 v* 标签 → 自动编译 zh+en 两版,打包成 tl2-loot-filter.zip(内含 zh/ 与 en/ 各一个 d3d9.dll)
+# 并发布为该标签的 Release。手动触发(workflow_dispatch)只编译+上传 artifact,不发 Release。
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write          # 允许 gh release create 建 Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      # 工程 Release 配置工具集是 v145(作者本机 VS18),hosted runner 没有 →
+      # 用 /p:PlatformToolset=v143 覆盖(VS2022 自带);并分别单独编两版:
+      # 传 _InnerLangBuild=true 跳过工程里「递归编两版+部署」目标(避免递归不传工具集 + 不部署)。
+      - name: Build zh
+        run: msbuild tl2_loot_filter.vcxproj /t:Build /p:Configuration=Release /p:Platform=Win32 /p:Lang=zh /p:_InnerLangBuild=true /p:PlatformToolset=v143 /m
+
+      - name: Build en
+        run: msbuild tl2_loot_filter.vcxproj /t:Build /p:Configuration=Release /p:Platform=Win32 /p:Lang=en /p:_InnerLangBuild=true /p:PlatformToolset=v143 /m
+
+      - name: Package (zh/ + en/ + README)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist\zh, dist\en > $null
+          Copy-Item bin\Release-zh\d3d9.dll dist\zh\d3d9.dll
+          Copy-Item bin\Release-en\d3d9.dll dist\en\d3d9.dll
+          Copy-Item README.md, README.zh-CN.md dist\
+          Compress-Archive -Path dist\* -DestinationPath tl2-loot-filter.zip -Force
+          Get-ChildItem -Recurse dist | Select-Object FullName, Length
+
+      - name: Upload artifact (every run)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tl2-loot-filter
+          path: tl2-loot-filter.zip
+
+      # 资产名固定 = tl2-loot-filter.zip → README 用 /releases/latest/download/ 永久指向最新版
+      - name: Publish Release (tag pushes only)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" tl2-loot-filter.zip --title "${{ github.ref_name }}" --generate-notes
