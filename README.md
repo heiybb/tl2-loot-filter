@@ -46,7 +46,7 @@ points to the newest release.)
 ## How it works (key design)
 
 - **Injection**: `d3d9.dll` proxy + [MinHook](https://github.com/TsudaKageyu/minhook). At runtime it
-  loads the real d3d9 in order: first `d3d9_dxvk.dll` in the game dir (DXVK users rename it to that),
+  loads the real d3d9 in order: first `d3d9_dxvk.dll` in the game dir,
   **else falls back to the system's native `d3d9.dll`**.
   → **No DXVK required**; the `d3d9_dxvk.dll` step only exists so it can coexist with DXVK (both want
   to be named d3d9.dll).

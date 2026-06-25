@@ -37,7 +37,7 @@ zip 内含 `zh/d3d9.dll` 和 `en/d3d9.dll`。挑你要的语言,把那个 `d3d9.
 ## 怎么工作的(关键设计)
 
 - **注入**:`d3d9.dll` 代理 + [MinHook](https://github.com/TsudaKageyu/minhook)。运行时按序加载底层 d3d9:
-  先找游戏目录的 `d3d9_dxvk.dll`(DXVK 用户改名而来),**没有则回退系统原生 `d3d9.dll`**。
+  先找游戏目录的 `d3d9_dxvk.dll`,**没有则回退系统原生 `d3d9.dll`**。
   → **不依赖 DXVK**;`d3d9_dxvk.dll` 那层只是为了和 DXVK 共存(双方都想叫 d3d9.dll)。
 - **引擎定位**:全部 **AOB(字节特征码)扫描**,不写死 RVA(`hooks.cpp` `ResolveEngine`),跨版本通用。
   关键签名没命中(不支持的版本)→ 安全退出,不挂任何 hook。
