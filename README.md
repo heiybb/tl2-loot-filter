@@ -34,7 +34,7 @@ points to the newest release.)
   - Block by **UNITTYPE** (e.g. `MAGIC SOCKETABLE`, `POTION`, `SCROLL`, …) *(not fully tested yet)*
   - Block by **name keyword** (substring, case-insensitive) *(not fully tested yet)*
   - Block by **rarity** (white / green+blue / gold / red / purple)
-  - Block by **level floor**
+  - Block by **item level** (hide items whose item level is below a floor)
   - **Safety switch `logOnly`**: log only, don't actually remove — observe first, enable real
     filtering once you've confirmed the verdicts are correct.
 - **ImGui overlay** (toggle with `Home`): rule editor + a "recent drops" table (name / level /
