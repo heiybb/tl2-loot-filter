@@ -14,10 +14,10 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       # 工程 Release 配置工具集是 v145(作者本机 VS18),hosted runner 没有 →
       # 用 /p:PlatformToolset=v143 覆盖(VS2022 自带);并分别单独编两版:
@@ -39,7 +39,7 @@ jobs:
           Get-ChildItem -Recurse dist | Select-Object FullName, Length
 
       - name: Upload artifact (every run)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tl2-loot-filter
           path: tl2-loot-filter.zip
