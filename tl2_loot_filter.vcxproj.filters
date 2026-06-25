@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Mod">
+      <UniqueIdentifier>{1a000000-0000-0000-0000-000000000001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{1a000000-0000-0000-0000-000000000002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MinHook">
+      <UniqueIdentifier>{1a000000-0000-0000-0000-000000000003}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="hooks.cpp"><Filter>Mod</Filter></ClCompile>
+    <ClCompile Include="overlay.cpp"><Filter>Mod</Filter></ClCompile>
+    <ClCompile Include="loot_filter.cpp"><Filter>Mod</Filter></ClCompile>
+    <ClCompile Include="hook_b.cpp"><Filter>Mod</Filter></ClCompile>
+    <ClCompile Include="third_party\imgui\imgui.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_draw.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_tables.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_widgets.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_dx9.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_win32.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="third_party\minhook\src\buffer.c"><Filter>MinHook</Filter></ClCompile>
+    <ClCompile Include="third_party\minhook\src\hook.c"><Filter>MinHook</Filter></ClCompile>
+    <ClCompile Include="third_party\minhook\src\trampoline.c"><Filter>MinHook</Filter></ClCompile>
+    <ClCompile Include="third_party\minhook\src\hde\hde32.c"><Filter>MinHook</Filter></ClCompile>
+    <ClCompile Include="third_party\minhook\src\hde\hde64.c"><Filter>MinHook</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="loot_filter.h"><Filter>Mod</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="d3d9.def"><Filter>Mod</Filter></None>
+    <None Include="README.md"><Filter>Mod</Filter></None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- TL2 Loot Filter — 32 位 (Win32) DLL,输出 d3d9.dll。
+       依赖:third_party\imgui (ocornut/imgui) 和 third_party\minhook (TsudaKageyu/minhook),
+       见 README「构建」。源码自包含编译,无需单独编 ImGui/MinHook。 -->
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{7E3A1C90-5B42-4D8E-9F21-3C6D8A0B1F44}</ProjectGuid>
+    <RootNamespace>tl2_loot_filter</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <!-- 界面语言:默认 zh(中文);build 传 /p:Lang=en 出英文(见 lang.h 的 T 宏)。
+         默认 build 会两版(zh+en)都编(见底部 BuildBothLangsAndDeploy 目标)。 -->
+    <Lang Condition="'$(Lang)'==''">zh</Lang>
+    <!-- 部署到游戏目录的语言:默认英文(可 /p:DeployLang=zh 改成部署中文版) -->
+    <DeployLang Condition="'$(DeployLang)'==''">en</DeployLang>
+    <!-- 输出名必须是 d3d9.dll;zh/en 分目录,互不覆盖,可同时保留两份 -->
+    <TargetName>d3d9</TargetName>
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Lang)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Configuration)-$(Lang)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)third_party\imgui;$(ProjectDir)third_party\imgui\backends;$(ProjectDir)third_party\minhook\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;UNICODE;_UNICODE;WIN32_LEAN_AND_MEAN;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <!-- 关键:源码是 UTF-8,强制 MSVC 按 UTF-8 解析(否则中文 locale 下中文注释/字符串会吃掉后续代码行)-->
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Condition="'$(Configuration)'=='Release'">
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <ClCompile Condition="'$(Lang)'=='en'">
+      <!-- 英文版:定义 LF_EN → lang.h 的 T(zh,en) 取 en -->
+      <PreprocessorDefinitions>LF_EN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ModuleDefinitionFile>$(ProjectDir)d3d9.def</ModuleDefinitionFile>
+      <AdditionalDependencies>user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Link Condition="'$(Configuration)'=='Release'">
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <!-- 复制改由底部 BuildBothLangsAndDeploy 目标统一处理(确保部署的是 DeployLang 版) -->
+  </ItemDefinitionGroup>
+  <!-- 本 mod 源码 -->
+  <ItemGroup>
+    <ClCompile Include="hooks.cpp" />
+    <ClCompile Include="overlay.cpp" />
+    <ClCompile Include="loot_filter.cpp" />
+    <ClCompile Include="hook_b.cpp" />
+    <ClInclude Include="loot_filter.h" />
+    <ClInclude Include="lang.h" />
+    <None Include="d3d9.def" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <!-- Dear ImGui(third_party\imgui)-->
+  <ItemGroup>
+    <ClCompile Include="third_party\imgui\imgui.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_dx9.cpp" />
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_win32.cpp" />
+  </ItemGroup>
+  <!-- MinHook(third_party\minhook),源码直接编进来 -->
+  <ItemGroup>
+    <ClCompile Include="third_party\minhook\src\buffer.c" />
+    <ClCompile Include="third_party\minhook\src\hook.c" />
+    <ClCompile Include="third_party\minhook\src\trampoline.c" />
+    <ClCompile Include="third_party\minhook\src\hde\hde32.c" />
+    <ClCompile Include="third_party\minhook\src\hde\hde64.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!-- 默认 build:编完当前 $(Lang) 后,再递归编另一种语言(两版都出),
+       然后把 $(DeployLang) 版(默认 en)复制进游戏目录。
+       内层递归带 _InnerLangBuild=true 防止无限递归;两版分目录,互不覆盖。
+       游戏正开着时复制会失败 —— ContinueOnError 让 build 仍成功,只打条警告。 -->
+  <Target Name="BuildBothLangsAndDeploy" AfterTargets="Build" Condition="'$(_InnerLangBuild)'!='true'">
+    <PropertyGroup>
+      <_OtherLang Condition="'$(Lang)'=='zh'">en</_OtherLang>
+      <_OtherLang Condition="'$(Lang)'=='en'">zh</_OtherLang>
+      <!-- 部署目标目录:可在命令行 /p:GameDir=... 覆盖,默认本机 TL2 安装路径。
+           换机器只需传 GameDir,或留空/目录不存在时自动跳过部署(仍出两版 DLL)。 -->
+      <GameDir Condition="'$(GameDir)'==''">E:\Torchlight 2\</GameDir>
+    </PropertyGroup>
+    <Message Importance="high" Text="[build] 已编 $(Lang),继续编 $(_OtherLang) ..." />
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Build"
+             Properties="Lang=$(_OtherLang);Configuration=$(Configuration);Platform=$(Platform);SolutionDir=$(SolutionDir);_InnerLangBuild=true" />
+    <Copy Condition="Exists('$(GameDir)')"
+          SourceFiles="$(SolutionDir)bin\$(Configuration)-$(DeployLang)\d3d9.dll"
+          DestinationFolder="$(GameDir)" SkipUnchangedFiles="false" ContinueOnError="true" />
+    <Message Importance="high" Condition="Exists('$(GameDir)')" Text="[build] zh+en 两版已生成;已部署 $(DeployLang) 版 → $(GameDir)d3d9.dll(若失败多半是游戏正开着,关掉再生成即可)" />
+    <Message Importance="high" Condition="!Exists('$(GameDir)')" Text="[build] zh+en 两版已生成;未部署(GameDir '$(GameDir)' 不存在)。如需部署传 /p:GameDir=你的TL2目录" />
+  </Target>
+</Project>

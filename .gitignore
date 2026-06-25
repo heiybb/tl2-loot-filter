@@ -1,0 +1,38 @@
+# ---- Build outputs ----
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+[Rr]elease-*/
+[Dd]ebug-*/
+x64/
+Win32/
+
+# ---- Visual Studio ----
+.vs/
+*.user
+*.suo
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+ipch/
+
+# ---- MSVC build artifacts ----
+*.obj
+*.o
+*.exp
+*.lib
+*.dll
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.tlog
+*.lastbuildstate
+
+# ---- misc ----
+*.log
+*.tmp
+Thumbs.db

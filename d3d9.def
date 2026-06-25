@@ -1,0 +1,8 @@
+; d3d9.def — 导出转发(运行时 stub,兼容 DXVK/系统二选一)
+; 把 wrapper 的导出名映射到 hooks.cpp 里的 Wrap_* stub。
+; 若 dumpbin /imports Torchlight2.exe + RenderSystem_Direct3D9.dll 显示还用了
+; 别的 d3d9 导出(D3DPERF_* 等),照样在 hooks.cpp 加 stub 再在这里加一行。
+LIBRARY d3d9
+EXPORTS
+    Direct3DCreate9   = Wrap_Direct3DCreate9
+    Direct3DCreate9Ex = Wrap_Direct3DCreate9Ex
